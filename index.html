@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SHUHEMEI 数合美 | 创意驱动效率，技术驱动效果</title>
+    <!-- 外部资源 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Noto+Sans+SC:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Noto+Sans+SC:wght@100;300;400;700;900&display=swap');
-        
         :root {
             --primary: #ffffff;
             --accent: #0ea5e9;
@@ -24,18 +26,21 @@
             letter-spacing: -0.01em;
         }
 
+        /* 渐变文字 */
         .gradient-text {
             background: linear-gradient(135deg, #fff 30%, #3b82f6 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
+        /* 玻璃导航栏 */
         .glass-nav {
             background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
+        /* 英雄区光晕背景 */
         .hero-aura {
             position: absolute;
             top: 0;
@@ -49,6 +54,7 @@
             z-index: -1;
         }
 
+        /* 服务卡片 */
         .service-card {
             background: var(--card-bg);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -63,6 +69,7 @@
             transform: translateY(-5px);
         }
 
+        /* 案例图片容器 */
         .case-img-container {
             position: relative;
             overflow: hidden;
@@ -75,6 +82,19 @@
             transform: scale(0.98);
         }
 
+        /* 案例图片样式 */
+        .case-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.6s ease;
+        }
+
+        .case-img-container:hover .case-img {
+            transform: scale(1.05);
+        }
+
+        /* 图片占位符 */
         .img-placeholder {
             background: linear-gradient(135deg, #0a0a0a 0%, #171717 100%);
             display: flex;
@@ -84,8 +104,11 @@
             padding: 40px;
             color: rgba(255,255,255,0.1);
             font-weight: 300;
+            font-size: 14px;
+            line-height: 1.6;
         }
 
+        /* 标签样式 */
         .shm-tag {
             padding: 4px 12px;
             border-radius: 4px;
@@ -97,6 +120,7 @@
             color: rgba(255,255,255,0.6);
         }
 
+        /* 行业节点 */
         .industry-node {
             border: 1px solid rgba(255,255,255,0.1);
             padding: 1rem 1.5rem;
@@ -111,6 +135,7 @@
             transform: scale(1.05);
         }
 
+        /* 滚动动画 */
         @keyframes subtle-scroll {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
@@ -122,6 +147,7 @@
             animation: subtle-scroll 40s linear infinite;
         }
 
+        /* 主按钮 */
         .btn-shm {
             background: white;
             color: black;
@@ -139,35 +165,70 @@
             box-shadow: 0 10px 30px rgba(14, 165, 233, 0.4);
         }
 
-        /* 模拟图片效果 */
+        /* 案例视觉叠加层 */
         .case-visual-overlay {
             position: absolute;
             inset: 0;
             background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.8) 100%);
             pointer-events: none;
         }
+
+        /* 平滑滚动 */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* 选中文字样式 */
+        ::selection {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #111;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
     </style>
 </head>
 <body>
-
-    <!-- Navigation -->
+    <!-- 导航栏 -->
     <nav class="fixed top-0 w-full z-50 glass-nav">
         <div class="max-w-[1440px] mx-auto px-8 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <span class="text-2xl font-black tracking-tighter">SHUHEMEI</span>
                 <div class="w-1.5 h-1.5 bg-sky-500 rounded-full"></div>
             </div>
+            <!-- 桌面端导航 -->
             <div class="hidden lg:flex space-x-12 text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">
                 <a href="#about" class="hover:text-white transition-colors">关于数合美</a>
                 <a href="#services" class="hover:text-white transition-colors">业务体系</a>
                 <a href="#cases" class="hover:text-white transition-colors">实战案例</a>
                 <a href="#contact" class="hover:text-white transition-colors">联系合作</a>
             </div>
-            <a href="#contact" class="text-xs font-bold border-b-2 border-sky-500 pb-1 hover:text-sky-400 transition-all">START A PROJECT</a>
+            <!-- 移动端菜单按钮 (可扩展) -->
+            <button class="lg:hidden text-white text-xl">
+                <i class="fas fa-bars"></i>
+            </button>
+            <!-- 咨询按钮 -->
+            <a href="#contact" class="hidden lg:block text-xs font-bold border-b-2 border-sky-500 pb-1 hover:text-sky-400 transition-all">START A PROJECT</a>
         </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- 英雄区 -->
     <header class="relative pt-48 pb-32 min-h-screen flex items-center overflow-hidden">
         <div class="hero-aura"></div>
         <div class="max-w-[1440px] mx-auto px-8 w-full relative">
@@ -195,13 +256,11 @@
                 </div>
             </div>
         </div>
-        <!-- Hero Background Visual Decor -->
-        <div class="absolute right-[-10%] top-[20%] w-[60%] h-[70%] opacity-20 hidden lg:block">
-            
-        </div>
+        <!-- 装饰元素 -->
+        <div class="absolute right-[-10%] top-[20%] w-[60%] h-[70%] opacity-20 hidden lg:block"></div>
     </header>
 
-    <!-- Mission & About -->
+    <!-- 关于我们 -->
     <section id="about" class="py-32 border-t border-white/5">
         <div class="max-w-[1440px] mx-auto px-8">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-20">
@@ -216,7 +275,7 @@
                         <p>数合美以“战略陪伴”为服务理念，不只提供定制化方案，更致力于成为企业持续增长的长期伙伴。我们协助客户厘清增长路径，确保营销动作与商业目标的高度统一。</p>
                         <p>面对市场的不断变化，数合美始终以数据为舟、以战略为桨，助力客户构建可持续的竞争壁垒与品牌资产。</p>
                     </div>
-                    <!-- Industry Marquee -->
+                    <!-- 行业滚动条 -->
                     <div class="mt-20 overflow-hidden relative">
                         <div class="scroll-track gap-4">
                             <span class="industry-node">大健康</span>
@@ -228,10 +287,16 @@
                             <span class="industry-node">能源</span>
                             <span class="industry-node">农业</span>
                             <span class="industry-node">文旅地产</span>
-                            <!-- Duplicates for seamless loop -->
+                            <!-- 重复内容实现无缝滚动 -->
                             <span class="industry-node">大健康</span>
                             <span class="industry-node">新消费</span>
                             <span class="industry-node">美妆时尚</span>
+                            <span class="industry-node">金融科技</span>
+                            <span class="industry-node">互联网</span>
+                            <span class="industry-node">智能制造</span>
+                            <span class="industry-node">能源</span>
+                            <span class="industry-node">农业</span>
+                            <span class="industry-node">文旅地产</span>
                         </div>
                     </div>
                 </div>
@@ -239,7 +304,7 @@
         </div>
     </section>
 
-    <!-- Services -->
+    <!-- 业务体系 -->
     <section id="services" class="py-32 bg-[#080808]">
         <div class="max-w-[1440px] mx-auto px-8">
             <div class="mb-24 flex flex-col md:flex-row md:items-end justify-between gap-8">
@@ -253,7 +318,7 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Capability 1 -->
+                <!-- 能力1：营销战略规划 -->
                 <div class="service-card p-12 rounded-[2rem]">
                     <div class="text-sky-500 mb-8"><i class="fa-solid fa-layer-group text-3xl"></i></div>
                     <h3 class="text-2xl font-bold mb-6">营销战略规划</h3>
@@ -263,7 +328,7 @@
                         <li class="flex items-start"><span class="w-1.5 h-1.5 bg-sky-500 rounded-full mt-2 mr-3"></span> 内部协同与资源整合推动</li>
                     </ul>
                 </div>
-                <!-- Capability 2 -->
+                <!-- 能力2：品牌定位与体验设计 -->
                 <div class="service-card p-12 rounded-[2rem]">
                     <div class="text-sky-500 mb-8"><i class="fa-solid fa-bezier-curve text-3xl"></i></div>
                     <h3 class="text-2xl font-bold mb-6">品牌定位与体验设计</h3>
@@ -273,7 +338,7 @@
                         <li class="flex items-start"><span class="w-1.5 h-1.5 bg-sky-500 rounded-full mt-2 mr-3"></span> 线下沉浸式体验空间</li>
                     </ul>
                 </div>
-                <!-- Capability 3 -->
+                <!-- 能力3：数字化营销运营 -->
                 <div class="service-card p-12 rounded-[2rem]">
                     <div class="text-sky-500 mb-8"><i class="fa-solid fa-chart-pie text-3xl"></i></div>
                     <h3 class="text-2xl font-bold mb-6">数字化营销运营</h3>
@@ -287,7 +352,7 @@
         </div>
     </section>
 
-    <!-- Cases -->
+    <!-- 实战案例 -->
     <section id="cases" class="py-40 bg-white text-black">
         <div class="max-w-[1440px] mx-auto px-8">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-20 mb-32 items-end">
@@ -305,12 +370,13 @@
                 </div>
             </div>
 
-            <!-- Case 01: Cataleya -->
+            <!-- 案例1: CATALEYA -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center mb-60">
                 <div class="case-img-container aspect-[4/5] md:aspect-video lg:aspect-[4/5] shadow-2xl">
-                    <div class="img-placeholder w-full h-full">
-                        
-                    </div>
+                    <!-- 替换为Cataleya案例图片 -->
+                    <img src="https://p11-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/1dd5cb9bd05f41618c8564b69d0f20aa.png~tplv-a9rns2rl98-24:720:720.png?lk3s=8e244e95&rcl=202603091647108F7FF5547D366C169C99&rrcfp=8a172a1a&x-expires=1773650830&x-signature=Zwf5SaAX9mxSemJs0lEm86UXe34%3D" 
+                         alt="Cataleya卡塔利亚高端零售终端IP形象设计" 
+                         class="case-img">
                     <div class="case-visual-overlay"></div>
                     <div class="absolute bottom-10 left-10 text-white z-10">
                         <span class="shm-tag bg-white text-black border-none mb-4 inline-block">Global Retail</span>
@@ -336,7 +402,7 @@
                 </div>
             </div>
 
-            <!-- Case 02: 扬子江药业 -->
+            <!-- 案例2: 扬子江药业 -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center mb-60">
                 <div class="order-2 lg:order-1 max-w-md ml-auto">
                     <span class="text-xs font-bold text-sky-600 tracking-[0.3em] uppercase mb-6 block">Case Study 02</span>
@@ -351,18 +417,19 @@
                     </div>
                 </div>
                 <div class="order-1 lg:order-2 case-img-container aspect-[4/5] md:aspect-video lg:aspect-[4/5] shadow-2xl">
-                    <div class="img-placeholder w-full h-full">
-                        
-                    </div>
+                    <!-- 替换为扬子江药业案例图片 -->
+                    <img src="https://p3-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/ee78603b00fb4856a30ae36f6fc4f01a.png~tplv-a9rns2rl98-24:720:720.png?lk3s=8e244e95&rcl=202603091647108F7FF5547D366C169C99&rrcfp=8a172a1a&x-expires=1773650830&x-signature=a59iDe%2FkjLKQhM8XJpU41Bnb3Fg%3D" 
+                         alt="扬子江药业护佑贝IP形象设计" 
+                         class="case-img">
                     <div class="case-visual-overlay"></div>
                 </div>
             </div>
 
-            <!-- Case 03: 数字化看板 (新补充) -->
+            <!-- 案例3: 数字化增长看板 -->
             <div class="mb-40">
                 <div class="case-img-container aspect-[21/9] overflow-hidden">
                     <div class="img-placeholder w-full h-full">
-                        
+                        数字化增长看板<br>数据可视化美学设计<br><br>图片占位区
                     </div>
                     <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
                         <div class="text-center text-white px-8">
@@ -375,7 +442,7 @@
         </div>
     </section>
 
-    <!-- Insights & Data Visualization -->
+    <!-- 数据可视化 -->
     <section class="py-32 bg-black overflow-hidden border-t border-white/5">
         <div class="max-w-[1440px] mx-auto px-8">
             <div class="text-center mb-20">
@@ -385,7 +452,7 @@
             <div class="relative group cursor-pointer">
                 <div class="case-img-container rounded-[3rem] h-[600px] w-full">
                     <div class="img-placeholder w-full h-full">
-                        
+                        数据可视化美学作品集<br>商业数据的视觉化表达<br><br>图片占位区
                     </div>
                 </div>
                 <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent flex flex-col justify-end p-20 opacity-90 transition-opacity group-hover:opacity-100">
@@ -395,7 +462,7 @@
         </div>
     </section>
 
-    <!-- Footer & Contact -->
+    <!-- 联系我们 & 页脚 -->
     <footer id="contact" class="pt-40 pb-20 bg-black">
         <div class="max-w-[1440px] mx-auto px-8">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-32 mb-40">
@@ -432,5 +499,30 @@
         </div>
     </footer>
 
+    <!-- 简单的JS增强交互 -->
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('.glass-nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('bg-black/90');
+                nav.classList.remove('bg-black/70');
+            } else {
+                nav.classList.remove('bg-black/90');
+                nav.classList.add('bg-black/70');
+            }
+        });
+
+        // 移动端菜单切换 (基础实现)
+        const menuBtn = document.querySelector('.lg\\:hidden');
+        if (menuBtn) {
+            menuBtn.addEventListener('click', function() {
+                // 这里可以实现移动端菜单的展开/收起逻辑
+                alert('移动端菜单功能可在此处实现');
+            });
+        }
+
+        // 移除图片占位符的点击提示（因为已经替换为真实图片）
+    </script>
 </body>
 </html>
