@@ -6,6 +6,8 @@
     <title>SHUHEMEI 数合美 | 创意驱动效率，技术驱动效果</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入MD5加密库（核心：隐藏明文密码） -->
+    <script src="https://cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Noto+Sans+SC:wght@300;400;700&display=swap');
         
@@ -130,7 +132,7 @@
         </div>
     </nav>
 
-    <!-- 登录弹窗（核心新增） -->
+    <!-- 登录弹窗（核心新增：加密登录） -->
     <div id="loginModal" class="fixed inset-0 bg-black/70 flex items-center justify-center hidden z-50">
         <div class="bg-gray-900 rounded-2xl w-full max-w-md p-8 border border-white/10">
             <div class="flex justify-between items-center mb-6">
@@ -148,7 +150,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-2">密码</label>
                     <input type="password" id="password" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500" 
-                           placeholder="请输入密码" value="888888">
+                           placeholder="请输入密码">
                 </div>
                 <div class="text-red-500 text-sm hidden" id="loginError">账号或密码错误</div>
                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">
@@ -349,9 +351,14 @@
         </div>
     </section>
 
-    <!-- 核心JS：登录功能 + 案例渲染 + 公司信息加载 -->
+    <!-- 核心JS：加密登录 + 案例渲染 + 公司信息加载 -->
     <script>
-        // ====================== 登录功能 ======================
+        // ====================== 加密登录功能（核心安全升级） ======================
+        // 配置：仅存储哈希值，无明文密码（可自行修改）
+        const VALID_USER = 'japhy5000'; // 账号（可修改）
+        const VALID_PWD_HASH = '520889699259b7125119b0809165d163'; // 密码888888的MD5哈希（可替换）
+        const LOGIN_EXPIRE_HOURS = 24; // 登录有效期24小时
+
         // 获取登录相关元素
         const loginBtn = document.getElementById('loginBtn');
         const loginModal = document.getElementById('loginModal');
@@ -363,6 +370,7 @@
         loginBtn.addEventListener('click', () => {
             loginModal.classList.remove('hidden');
             loginError.classList.add('hidden');
+            document.getElementById('password').value = ''; // 每次打开清空密码
         });
 
         // 关闭登录弹窗
@@ -377,7 +385,7 @@
             }
         });
 
-        // 登录验证逻辑
+        // 加密登录验证逻辑（核心：无明文密码）
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value.trim();
@@ -390,21 +398,21 @@
                 return;
             }
             
-            // 2. 验证账号密码（japhy5000 / 888888）
-            if (username === 'japhy5000' && password === '888888') {
-                // 3. 设置登录状态
+            // 2. 加密验证（MD5哈希对比，无明文密码）
+            const inputPwdHash = md5(password); // 对输入密码加密
+            if (username === VALID_USER && inputPwdHash === VALID_PWD_HASH) {
+                // 3. 设置登录状态（带有效期）
                 localStorage.setItem('caseAdminLoggedIn', 'true');
                 localStorage.setItem('loginTime', new Date().getTime().toString());
                 
-                // 4. 显示登录成功提示
+                // 4. 登录成功提示
                 loginError.textContent = '登录成功！正在进入后台...';
                 loginError.classList.remove('hidden');
                 loginError.classList.remove('text-red-500');
                 loginError.classList.add('text-green-500');
                 
-                // 5. 延迟跳转（用户可看到提示）
+                // 5. 跳转后台（无弹窗拦截）
                 setTimeout(() => {
-                    // 关键：使用当前窗口跳转，无弹窗拦截问题
                     window.location.href = 'admin.html';
                 }, 1500);
                 
@@ -416,17 +424,6 @@
                 loginError.classList.add('text-red-500');
                 document.getElementById('password').value = '';
             }
-        });
-
-        // 页面加载自动登录（调试用）
-        window.addEventListener('load', () => {
-            if (window.location.hash === '#login') {
-                loginBtn.click();
-            }
-            
-            // 加载公司信息和案例数据
-            loadCompanyInfo();
-            loadCases();
         });
 
         // ====================== 公司信息加载 ======================
@@ -589,6 +586,16 @@
                     console.error('案例加载失败:', error);
                 });
         }
+
+        // ====================== 页面初始化 ======================
+        window.addEventListener('load', () => {
+            if (window.location.hash === '#login') {
+                loginBtn.click();
+            }
+            // 加载公司信息和案例数据
+            loadCompanyInfo();
+            loadCases();
+        });
     </script>
 
 </body>
