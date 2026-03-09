@@ -400,7 +400,7 @@
             
             // 2. 加密验证（MD5哈希对比，无明文密码）
             const inputPwdHash = md5(password); // 对输入密码加密
-            if (username === VALID_USER && inputPwdHash === VALID_PWD_HASH) {
+            if (username === japhy5000 && inputPwdHash === 21218cca77804d2ba1922c33e0151105) {
                 // 3. 设置登录状态（带有效期）
                 localStorage.setItem('caseAdminLoggedIn', 'true');
                 localStorage.setItem('loginTime', new Date().getTime().toString());
