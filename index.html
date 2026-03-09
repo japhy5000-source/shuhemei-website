@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHUHEMEI 数合美 | 创意驱动效率，技术驱动效果</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Noto+Sans+SC:wght@300;400;700&display=swap');
+        
+        :root {
+            --primary: #ffffff;
+            --accent: #3b82f6;
+            --bg-dark: #050505;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--primary);
+            overflow-x: hidden;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glass-nav {
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hero-glow {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(5, 5, 5, 0) 70%);
+            z-index: -1;
+        }
+
+        .service-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .service-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent);
+            transform: translateY(-10px);
+        }
+
+        .case-card {
+            transition: all 0.5s ease;
+        }
+
+        .img-placeholder {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.3);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border-radius: 1rem;
+            font-size: 12px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--bg-dark);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            color: var(--primary);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        .case-tag {
+            @apply inline-block px-4 py-1 rounded-full text-xs font-bold mb-6;
+        }
+    </style>
+</head>
+<body class="selection:bg-blue-500 selection:text-white">
+
+    <!-- Navigation - 包含登录按钮 -->
+    <nav class="fixed top-0 w-full z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <span class="text-2xl font-black tracking-tighter">SHUHEMEI</span>
+                <span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+            </div>
+            <div class="hidden md:flex space-x-10 text-sm font-medium tracking-wide text-gray-400">
+                <a href="#services" class="hover:text-white transition-colors">业务矩阵</a>
+                <a href="#cases" class="hover:text-white transition-colors">实战案例</a>
+                <a href="#philosophy" class="hover:text-white transition-colors">服务理念</a>
+                <a href="#contact" class="hover:text-white transition-colors">联系我们</a>
+            </div>
+            <!-- 登录按钮 + 咨询按钮 -->
+            <div class="flex items-center space-x-4">
+                <!-- 登录按钮（核心新增） -->
+                <button id="loginBtn" class="px-4 py-2 rounded-full border border-white/20 text-sm hover:bg-white hover:text-black transition-all">
+                    <i class="fa-solid fa-user-lock mr-2"></i>管理后台
+                </button>
+                <button class="px-6 py-2 rounded-full border border-white/20 text-sm hover:bg-white hover:text-black transition-all">
+                    开启咨询
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 登录弹窗（核心新增） -->
+    <div id="loginModal" class="fixed inset-0 bg-black/70 flex items-center justify-center hidden z-50">
+        <div class="bg-gray-900 rounded-2xl w-full max-w-md p-8 border border-white/10">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">后台登录</h3>
+                <button id="closeLoginModal" class="text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">账号</label>
+                    <input type="text" id="username" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500" 
+                           placeholder="请输入账号" value="japhy5000">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">密码</label>
+                    <input type="password" id="password" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500" 
+                           placeholder="请输入密码" value="888888">
+                </div>
+                <div class="text-red-500 text-sm hidden" id="loginError">账号或密码错误</div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">
+                    登录
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <header class="relative pt-40 pb-20 overflow-hidden">
+        <div class="hero-glow"></div>
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs mb-8">
+                <span class="text-blue-400">INSIGHT</span>
+                <span class="text-gray-400">读懂增长：数合美 品牌数字化增长方案</span>
+            </div>
+            <h1 class="text-5xl md:text-8xl font-extrabold mb-8 tracking-tighter leading-tight">
+                CREATIVITY DRIVES <span class="gradient-text">EFFICIENCY</span><br>
+                TECHNOLOGY DRIVES <span class="gradient-text">EFFECTIVENESS</span>
+            </h1>
+            <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-12 font-light company-intro">
+                以数据驱动为核心，专注营销战略规划与增长落地。数合美深度融合用户洞察、动态市场研究与商业策略，提供全链路增效方案。
+            </p>
+            <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-6">
+                <a href="#services" class="btn-primary px-10 py-4 rounded-full font-bold">查看业务矩阵</a>
+                <a href="#cases" class="px-10 py-4 rounded-full border border-white/20 hover:border-white transition-all font-bold">浏览实战案例 <i class="fa-solid fa-arrow-right ml-2 text-xs"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats - 动态加载公司核心数据 -->
+    <section class="py-20 border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-12 text-center stats-container">
+                <div>
+                    <div class="text-4xl font-bold mb-2">25%</div>
+                    <div class="text-gray-500 text-sm">大健康行业服务占比</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold mb-2">9+</div>
+                    <div class="text-gray-500 text-sm">核心行业深度覆盖</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold mb-2">400%</div>
+                    <div class="text-gray-500 text-sm">简自美年度营收增长</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold mb-2">战略陪伴</div>
+                    <div class="text-gray-500 text-sm">核心服务理念</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section id="services" class="py-32">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-20">
+                <div class="max-w-2xl">
+                    <h2 class="text-4xl font-bold mb-6 italic tracking-tight">Core Services / 业务矩阵</h2>
+                    <p class="text-gray-400">基于“创意驱动效率、技术驱动效果”的双轮驱动模型，覆盖全链路营销服务。</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div class="service-card p-10 rounded-3xl">
+                    <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center mb-8">
+                        <i class="fa-solid fa-compass text-blue-500 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">营销战略规划</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">深入企业业务场景与行业环境，协助客户厘清增长路径，实现策略到执行的全链路增效。</p>
+                    <ul class="text-xs text-gray-400 space-y-2">
+                        <li>• 动态市场研究与用户洞察</li>
+                        <li>• 商业策略规划与增长建议</li>
+                        <li>• GEO/GAO AI营销体系搭建</li>
+                    </ul>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="service-card p-10 rounded-3xl">
+                    <div class="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center mb-8">
+                        <i class="fa-solid fa-wand-magic-sparkles text-purple-500 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">品牌定位与体验设计</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">构建品牌差异化认知，涵盖品牌定位、IP形象开发、推广应用及线下沉浸式体验营造。</p>
+                    <ul class="text-xs text-gray-400 space-y-2">
+                        <li>• 品牌差异化竞争壁垒搭建</li>
+                        <li>• IP形象设计与全触点应用</li>
+                        <li>• 品牌视觉体系（VI/SI）设计</li>
+                    </ul>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="service-card p-10 rounded-3xl">
+                    <div class="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center mb-8">
+                        <i class="fa-solid fa-chart-line text-green-500 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">数字化营销运营</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">专注客户价值长效管理，提供整合传播策略与数据可视化美学方案，驱动可持续增长。</p>
+                    <ul class="text-xs text-gray-400 space-y-2">
+                        <li>• 全域数字营销（社媒/搜索/电商）</li>
+                        <li>• 私域运营与客户长效价值管理</li>
+                        <li>• 营销效果追踪与ROI优化</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cases Section - 动态渲染 -->
+    <section id="cases" class="py-32 bg-white text-black rounded-t-[3rem] md:rounded-t-[5rem]">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="mb-20">
+                <h2 class="text-5xl font-extrabold mb-4 tracking-tighter">Case Studies / 实战案例</h2>
+                <p class="text-gray-500">读懂增长：数合美如何助力品牌突破同质化竞争，构建可持续增长壁垒。</p>
+            </div>
+            
+            <div class="space-y-32" id="cases-container">
+                <!-- 案例将通过JS动态渲染 -->
+                <div class="text-center py-20 text-gray-500">
+                    加载案例中... 请确保cases.json文件已放在同一目录
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Insights Preview -->
+    <section class="py-32 bg-gray-900 overflow-hidden relative">
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">“读懂增长逻辑，驱动品牌未来”</h2>
+                <p class="text-gray-400">数合美核心能力：GEO/GAO AI营销体系 + 数字化增长涡轮模型 + 6大品牌运营配称</p>
+            </div>
+            <div class="img-placeholder rounded-[3rem] h-96 w-full mb-12">
+                数合美数字化增长涡轮模型+GEO/GAO AI营销体系可视化
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="img-placeholder h-40">全渠道数字营销</div>
+                <div class="img-placeholder h-40">品牌IP打造体系</div>
+                <div class="img-placeholder h-40">用户洞察与研究</div>
+                <div class="img-placeholder h-40">营销效果数据化</div>
+            </div>
+        </div>
+        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/10 blur-[120px] rounded-full"></div>
+    </section>
+
+    <!-- Philosophy -->
+    <section id="philosophy" class="py-32 bg-gray-50 text-black">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold mb-10 tracking-tight underline decoration-blue-500 underline-offset-8">服务理念：战略陪伴</h2>
+            <p class="text-xl text-gray-600 leading-relaxed font-light mb-12 philosophy-desc">
+                “我们深入企业业务场景与行业竞争环境，协助客户厘清增长路径，推动内部协同与资源整合，实现从策略到执行的全链路增效。数合美致力于成为企业持续增长的长期伙伴，不只提供定制化方案，更确保营销动作与商业目标的高度统一。”
+            </p>
+            <div class="flex items-center justify-center space-x-4">
+                <div class="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl">
+                    <i class="fa-solid fa-quote-left"></i>
+                </div>
+                <div class="text-left">
+                    <p class="font-bold">数合美营销战略团队</p>
+                    <p class="text-xs text-gray-400 uppercase tracking-widest">Growth Partners | 增长伙伴</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact & Footer -->
+    <section id="contact" class="py-32 bg-black">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="bg-gradient-to-br from-blue-700 to-blue-900 rounded-[3rem] p-12 md:p-24 relative overflow-hidden text-center md:text-left">
+                <div class="relative z-10 flex flex-col md:flex-row items-center justify-between">
+                    <div>
+                        <h2 class="text-5xl md:text-7xl font-black mb-8 leading-none">ALL IN<br>MARKETING.</h2>
+                        <p class="text-blue-200 text-lg opacity-80 max-w-md">
+                            成熟品牌值得信赖的营销战略顾问，<br>成长型企业敏捷创新的增长伙伴。<br>覆盖大健康/家居/美妆/智造/文旅等9+核心行业。
+                        </p>
+                    </div>
+                    <button class="mt-12 md:mt-0 bg-white text-blue-900 px-12 py-6 rounded-full font-black text-xl hover:shadow-[0_0_50px_rgba(255,255,255,0.3)] transition-all">
+                        开启战略陪伴 <i class="fa-solid fa-arrow-right ml-3"></i>
+                    </button>
+                </div>
+                <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
+            </div>
+
+            <footer class="mt-32 pt-20 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm">
+                <div class="flex items-center space-x-3 mb-8 md:mb-0">
+                    <span class="text-2xl font-black text-white tracking-tighter">SHUHEMEI</span>
+                    <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                </div>
+                <div class="flex space-x-8">
+                    <a href="#" class="hover:text-white transition-colors">微信公众号</a>
+                    <a href="#" class="hover:text-white transition-colors">加入我们</a>
+                    <a href="#" class="hover:text-white transition-colors">品牌手册下载</a>
+                </div>
+                <p class="mt-8 md:mt-0 opacity-50">&copy; 2025 数合美文化产业发展有限公司 保留所有权利</p>
+            </footer>
+        </div>
+    </section>
+
+    <!-- 核心JS：登录功能 + 案例渲染 + 公司信息加载 -->
+    <script>
+        // ====================== 登录功能 ======================
+        // 获取登录相关元素
+        const loginBtn = document.getElementById('loginBtn');
+        const loginModal = document.getElementById('loginModal');
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        const loginForm = document.getElementById('loginForm');
+        const loginError = document.getElementById('loginError');
+
+        // 打开登录弹窗
+        loginBtn.addEventListener('click', () => {
+            loginModal.classList.remove('hidden');
+            loginError.classList.add('hidden');
+        });
+
+        // 关闭登录弹窗
+        closeLoginModal.addEventListener('click', () => {
+            loginModal.classList.add('hidden');
+        });
+
+        // 点击弹窗外部关闭
+        loginModal.addEventListener('click', (e) => {
+            if (e.target === loginModal) {
+                loginModal.classList.add('hidden');
+            }
+        });
+
+        // 登录验证逻辑
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            
+            // 1. 基础验证
+            if (!username || !password) {
+                loginError.textContent = '账号或密码不能为空';
+                loginError.classList.remove('hidden');
+                return;
+            }
+            
+            // 2. 验证账号密码（japhy5000 / 888888）
+            if (username === 'japhy5000' && password === '888888') {
+                // 3. 设置登录状态
+                localStorage.setItem('caseAdminLoggedIn', 'true');
+                localStorage.setItem('loginTime', new Date().getTime().toString());
+                
+                // 4. 显示登录成功提示
+                loginError.textContent = '登录成功！正在进入后台...';
+                loginError.classList.remove('hidden');
+                loginError.classList.remove('text-red-500');
+                loginError.classList.add('text-green-500');
+                
+                // 5. 延迟跳转（用户可看到提示）
+                setTimeout(() => {
+                    // 关键：使用当前窗口跳转，无弹窗拦截问题
+                    window.location.href = 'admin.html';
+                }, 1500);
+                
+            } else {
+                // 登录失败
+                loginError.textContent = '账号或密码错误';
+                loginError.classList.remove('hidden');
+                loginError.classList.remove('text-green-500');
+                loginError.classList.add('text-red-500');
+                document.getElementById('password').value = '';
+            }
+        });
+
+        // 页面加载自动登录（调试用）
+        window.addEventListener('load', () => {
+            if (window.location.hash === '#login') {
+                loginBtn.click();
+            }
+            
+            // 加载公司信息和案例数据
+            loadCompanyInfo();
+            loadCases();
+        });
+
+        // ====================== 公司信息加载 ======================
+        function loadCompanyInfo() {
+            fetch('company.json')
+                .then(response => {
+                    if (!response.ok) throw new Error('company.json文件不存在');
+                    return response.json();
+                })
+                .then(data => {
+                    // 更新核心数据
+                    document.querySelector('.stats-container').innerHTML = `
+                        <div>
+                            <div class="text-4xl font-bold mb-2">${data.healthRatio || '25%'}</div>
+                            <div class="text-gray-500 text-sm">大健康行业服务占比</div>
+                        </div>
+                        <div>
+                            <div class="text-4xl font-bold mb-2">${data.industryCount || '9+'}</div>
+                            <div class="text-gray-500 text-sm">核心行业深度覆盖</div>
+                        </div>
+                        <div>
+                            <div class="text-4xl font-bold mb-2">${data.growthData || '400%'}</div>
+                            <div class="text-gray-500 text-sm">简自美年度营收增长</div>
+                        </div>
+                        <div>
+                            <div class="text-4xl font-bold mb-2">${data.servicePhilosophy || '战略陪伴'}</div>
+                            <div class="text-gray-500 text-sm">核心服务理念</div>
+                        </div>
+                    `;
+                    
+                    // 更新公司介绍
+                    const introElements = document.querySelectorAll('.company-intro');
+                    introElements.forEach(el => {
+                        el.textContent = data.companyIntro || '以数据驱动为核心，专注营销战略规划与增长落地。';
+                    });
+                    
+                    // 更新服务理念
+                    const philosophyElements = document.querySelectorAll('.philosophy-desc');
+                    philosophyElements.forEach(el => {
+                        el.textContent = data.philosophyDesc || '我们深入企业业务场景与行业竞争环境...';
+                    });
+                    
+                })
+                .catch(error => console.log('加载公司信息失败:', error));
+        }
+
+        // ====================== 案例渲染功能 ======================
+        function loadCases() {
+            fetch('cases.json')
+                .then(response => {
+                    if (!response.ok) throw new Error('cases.json文件不存在');
+                    return response.json();
+                })
+                .then(cases => {
+                    const container = document.getElementById('cases-container');
+                    container.innerHTML = ''; // 清空加载提示
+                    
+                    if (cases.length === 0) {
+                        container.innerHTML = `
+                        <div class="text-center py-20 text-gray-500">
+                            <i class="fa-solid fa-folder-open text-4xl mb-4 text-gray-300"></i>
+                            <p>暂无案例数据</p>
+                            <p class="text-sm mt-2">请通过管理后台添加案例</p>
+                        </div>`;
+                        return;
+                    }
+                    
+                    cases.forEach(caseItem => {
+                        // 构建案例HTML
+                        let caseHTML = `
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                            <div class="order-2 lg:order-1">
+                                <span class="case-tag bg-${caseItem.tagColor || 'blue'}-100 text-${caseItem.tagColor || 'blue'}-600">${caseItem.tag || '未分类'}</span>
+                                <h3 class="text-4xl font-bold mb-6 italic">${caseItem.title || '无标题'}</h3>
+                                <p class="text-gray-600 mb-8 leading-relaxed">${caseItem.description || '无描述'}</p>
+                                <div class="space-y-6">
+                                    <div class="border-l-4 border-${caseItem.tagColor || 'blue'}-500 pl-6">
+                                        <h4 class="font-bold text-sm uppercase text-gray-400 mb-2">策略核心 / Strategy</h4>
+                                        <p class="text-lg font-semibold">${caseItem.strategyTitle || '无'}</p>
+                                        <p class="text-sm text-gray-500">${caseItem.strategyDesc || '无'}</p>
+                                    </div>
+                        `;
+
+                        // 渲染成果展示（卡片/列表）
+                        if (caseItem.resultType === 'cards' && caseItem.results) {
+                            caseHTML += `<div class="grid grid-cols-2 gap-4">`;
+                            caseItem.results.forEach(result => {
+                                caseHTML += `
+                                <div class="bg-gray-50 p-4 rounded-2xl">
+                                    <span class="text-xs text-gray-400 block mb-1">${result.label || '标签'}</span>
+                                    <span class="font-bold">${result.value || '内容'}</span>
+                                </div>
+                                `;
+                            });
+                            caseHTML += `</div>`;
+                        } else if (caseItem.resultType === 'list' && caseItem.results) {
+                            caseHTML += `<ul class="text-sm text-gray-500 space-y-2">`;
+                            caseItem.results.forEach(result => {
+                                if (result) {
+                                    caseHTML += `
+                                    <li><i class="fa-solid fa-check text-green-500 mr-2"></i> ${result}</li>
+                                    `;
+                                }
+                            });
+                            caseHTML += `</ul>`;
+                        }
+
+                        // 图片部分
+                        caseHTML += `
+                                    </div>
+                                </div>
+                                <div class="order-1 lg:order-2 space-y-4">
+                                    ${caseItem.images?.mainUrl 
+                                        ? `<img src="${caseItem.images.mainUrl}" alt="${caseItem.title}" class="rounded-[2rem] aspect-video object-cover w-full">`
+                                        : `<div class="img-placeholder rounded-[2rem] aspect-video p-8">${caseItem.images?.main || '案例主图'}</div>`
+                                    }
+                        `;
+
+                        // 子图片（2列/3列）
+                        if (caseItem.images?.sub3Url) {
+                            caseHTML += `<div class="grid grid-cols-3 gap-4">`;
+                            caseHTML += caseItem.images.sub1Url 
+                                ? `<img src="${caseItem.images.sub1Url}" alt="子图1" class="rounded-2xl aspect-square object-cover w-full">`
+                                : `<div class="img-placeholder rounded-2xl aspect-square">${caseItem.images?.sub1 || '子图1'}</div>`;
+                            caseHTML += caseItem.images.sub2Url 
+                                ? `<img src="${caseItem.images.sub2Url}" alt="子图2" class="rounded-2xl aspect-square object-cover w-full">`
+                                : `<div class="img-placeholder rounded-2xl aspect-square">${caseItem.images?.sub2 || '子图2'}</div>`;
+                            caseHTML += caseItem.images.sub3Url 
+                                ? `<img src="${caseItem.images.sub3Url}" alt="子图3" class="rounded-2xl aspect-square object-cover w-full">`
+                                : `<div class="img-placeholder rounded-2xl aspect-square">${caseItem.images?.sub3 || '子图3'}</div>`;
+                        } else {
+                            caseHTML += `<div class="grid grid-cols-2 gap-4">`;
+                            caseHTML += caseItem.images?.sub1Url 
+                                ? `<img src="${caseItem.images.sub1Url}" alt="子图1" class="rounded-3xl aspect-square object-cover w-full">`
+                                : `<div class="img-placeholder rounded-3xl aspect-square">${caseItem.images?.sub1 || '子图1'}</div>`;
+                            caseHTML += caseItem.images?.sub2Url 
+                                ? `<img src="${caseItem.images.sub2Url}" alt="子图2" class="rounded-3xl aspect-square object-cover w-full">`
+                                : `<div class="img-placeholder rounded-3xl aspect-square">${caseItem.images?.sub2 || '子图2'}</div>`;
+                        }
+
+                        caseHTML += `
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+
+                        // 添加到容器
+                        container.innerHTML += caseHTML;
+                    });
+                })
+                .catch(error => {
+                    const container = document.getElementById('cases-container');
+                    container.innerHTML = `
+                    <div class="text-center py-20 text-gray-500">
+                        <i class="fa-solid fa-file-excel text-4xl mb-4 text-red-500"></i>
+                        <p>案例加载失败！</p>
+                        <p class="text-sm mt-2">请确保cases.json文件已放在当前目录下</p>
+                    </div>
+                    `;
+                    console.error('案例加载失败:', error);
+                });
+        }
+    </script>
+
+</body>
+</html>
