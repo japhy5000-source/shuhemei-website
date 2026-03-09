@@ -251,7 +251,7 @@
     </div>
 
     <script>
-        // ====================== 登录验证（兼容加密登录） ======================
+        // ====================== 登录验证（修复跳转问题） ======================
         function checkAuth() {
             const isLoggedIn = localStorage.getItem('caseAdminLoggedIn') === 'true';
             const loginTime = localStorage.getItem('loginTime');
@@ -261,8 +261,8 @@
             const isExpired = loginTime && (new Date().getTime() - parseInt(loginTime) > LOGIN_EXPIRE_HOURS * 60 * 60 * 1000);
             
             if (!isLoggedIn || isExpired) {
-                document.getElementById('authError').classList.remove('hidden');
-                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+                // 未登录/过期时，直接跳转到登录页（而不是只显示提示）
+                window.location.href = 'index.html#login';
                 return false;
             }
             return true;
@@ -272,10 +272,11 @@
         document.getElementById('logoutBtn').addEventListener('click', () => {
             localStorage.removeItem('caseAdminLoggedIn');
             localStorage.removeItem('loginTime');
-            window.location.href = 'index.html';
+            // 退出后强制跳转登录页
+            window.location.href = 'index.html#login';
         });
 
-        // 前往登录
+        // 前往登录（备用按钮，确保跳转正确）
         document.getElementById('goLoginBtn').addEventListener('click', () => {
             window.location.href = 'index.html#login';
         });
@@ -320,61 +321,78 @@
         setupImagePreview('sub3Image', 'sub3ImagePreview', 'sub3ImageBase64');
 
         // ====================== 案例管理 ======================
-        // 加载案例数据
+        // 加载案例数据（修复：优先读取本地临时数据）
         function loadCases() {
-            fetch('cases.json')
-                .then(response => {
-                    if (!response.ok) return [];
-                    return response.json();
-                })
-                .then(cases => {
-                    const casesList = document.getElementById('casesList');
-                    if (cases.length === 0) {
-                        casesList.innerHTML = '<div class="text-gray-500 text-center py-8">暂无案例数据</div>';
-                        return;
-                    }
-                    
-                    casesList.innerHTML = '';
-                    cases.forEach((item, index) => {
-                        const caseItem = document.createElement('div');
-                        caseItem.className = 'case-item';
-                        caseItem.innerHTML = `
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h3 class="font-bold text-lg">${item.title || '无标题'}</h3>
-                                    <p class="text-sm text-gray-500 mt-1">${item.tag || '未分类'}</p>
-                                </div>
-                                <button class="delete-case text-red-500 hover:text-red-700" data-index="${index}">
-                                    <i class="fa-solid fa-trash"></i> 删除
-                                </button>
-                            </div>
-                        `;
-                        casesList.appendChild(caseItem);
+            // 优先读取本地存储的临时数据
+            const tempCases = localStorage.getItem('tempCases');
+            let cases = [];
+            
+            if (tempCases) {
+                cases = JSON.parse(tempCases);
+            } else {
+                // 本地无数据时再尝试读取远程文件
+                fetch('cases.json')
+                    .then(response => {
+                        if (!response.ok) return [];
+                        return response.json();
+                    })
+                    .then(fetchedCases => {
+                        cases = fetchedCases;
+                        renderCasesList(cases);
                     });
-                    
-                    // 添加删除事件
-                    document.querySelectorAll('.delete-case').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            const index = parseInt(e.target.closest('.delete-case').dataset.index);
-                            deleteCase(index);
-                        });
-                    });
+                return;
+            }
+            
+            renderCasesList(cases);
+        }
+
+        // 渲染案例列表（抽离成独立函数，便于复用）
+        function renderCasesList(cases) {
+            const casesList = document.getElementById('casesList');
+            if (cases.length === 0) {
+                casesList.innerHTML = '<div class="text-gray-500 text-center py-8">暂无案例数据</div>';
+                return;
+            }
+            
+            casesList.innerHTML = '';
+            cases.forEach((item, index) => {
+                const caseItem = document.createElement('div');
+                caseItem.className = 'case-item';
+                caseItem.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold text-lg">${item.title || '无标题'}</h3>
+                            <p class="text-sm text-gray-500 mt-1">${item.tag || '未分类'}</p>
+                        </div>
+                        <button class="delete-case text-red-500 hover:text-red-700" data-index="${index}">
+                            <i class="fa-solid fa-trash"></i> 删除
+                        </button>
+                    </div>
+                `;
+                casesList.appendChild(caseItem);
+            });
+            
+            // 添加删除事件
+            document.querySelectorAll('.delete-case').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const index = parseInt(e.target.closest('.delete-case').dataset.index);
+                    deleteCase(index);
                 });
+            });
         }
 
         // 删除案例
         function deleteCase(index) {
             if (!confirm('确定要删除这个案例吗？')) return;
             
-            fetch('cases.json')
-                .then(response => response.json())
-                .then(cases => {
-                    cases.splice(index, 1);
-                    // 保存到本地存储（临时）
-                    localStorage.setItem('tempCases', JSON.stringify(cases));
-                    loadCases();
-                    showSuccessModal('案例删除成功！', '该案例已从列表中移除，请导出最新数据更新到项目中。');
-                });
+            const tempCases = localStorage.getItem('tempCases');
+            let cases = tempCases ? JSON.parse(tempCases) : [];
+            
+            cases.splice(index, 1);
+            // 保存到本地存储（临时）
+            localStorage.setItem('tempCases', JSON.stringify(cases));
+            loadCases();
+            showSuccessModal('案例删除成功！', '该案例已从列表中移除，请导出最新数据更新到项目中。');
         }
 
         // 保存案例
@@ -399,29 +417,25 @@
                 }
             };
             
-            // 加载现有案例
-            fetch('cases.json')
-                .then(response => {
-                    if (!response.ok) return [];
-                    return response.json();
-                })
-                .then(cases => {
-                    cases.push(caseData);
-                    // 保存到本地存储（临时）
-                    localStorage.setItem('tempCases', JSON.stringify(cases));
-                    // 重置表单
-                    document.getElementById('caseForm').reset();
-                    document.querySelectorAll('.image-preview').forEach(preview => {
-                        preview.innerHTML = '<span>预览区域</span>';
-                    });
-                    document.querySelectorAll('input[type="hidden"][id$="Base64"]').forEach(input => {
-                        input.value = '';
-                    });
-                    // 重新加载案例列表
-                    loadCases();
-                    // 显示成功提示
-                    showSuccessModal('案例添加成功！', '新案例已添加到列表中，请导出最新数据更新到项目中。');
-                });
+            // 读取现有案例（优先本地）
+            const tempCases = localStorage.getItem('tempCases');
+            let cases = tempCases ? JSON.parse(tempCases) : [];
+            
+            cases.push(caseData);
+            // 保存到本地存储（临时）
+            localStorage.setItem('tempCases', JSON.stringify(cases));
+            // 重置表单
+            document.getElementById('caseForm').reset();
+            document.querySelectorAll('.image-preview').forEach(preview => {
+                preview.innerHTML = '<span>预览区域</span>';
+            });
+            document.querySelectorAll('input[type="hidden"][id$="Base64"]').forEach(input => {
+                input.value = '';
+            });
+            // 重新加载案例列表
+            loadCases();
+            // 显示成功提示
+            showSuccessModal('案例添加成功！', '新案例已添加到列表中，请导出最新数据更新到项目中。');
         });
 
         // 重置案例表单
@@ -436,8 +450,21 @@
         });
 
         // ====================== 公司信息管理 ======================
-        // 加载公司信息
+        // 加载公司信息（修复：优先读取本地临时数据）
         function loadCompanyInfo() {
+            const tempCompany = localStorage.getItem('tempCompany');
+            if (tempCompany) {
+                const data = JSON.parse(tempCompany);
+                document.getElementById('healthRatio').value = data.healthRatio || '';
+                document.getElementById('industryCount').value = data.industryCount || '';
+                document.getElementById('growthData').value = data.growthData || '';
+                document.getElementById('servicePhilosophy').value = data.servicePhilosophy || '';
+                document.getElementById('companyIntro').value = data.companyIntro || '';
+                document.getElementById('philosophyDesc').value = data.philosophyDesc || '';
+                return;
+            }
+            
+            // 本地无数据时读取远程文件
             fetch('company.json')
                 .then(response => {
                     if (!response.ok) return {};
@@ -538,6 +565,7 @@
 
         // ====================== 页面初始化 ======================
         window.addEventListener('load', () => {
+            // 先验证登录状态，通过后再加载数据
             if (checkAuth()) {
                 loadCases();
                 loadCompanyInfo();
