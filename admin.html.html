@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数合美 | 管理后台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #f8fafc;
+        }
+        .form-input {
+            @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all;
+        }
+        .form-label {
+            @apply block text-sm font-medium text-gray-700 mb-2;
+        }
+        .btn-primary {
+            @apply bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors;
+        }
+        .btn-secondary {
+            @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg transition-colors;
+        }
+        .card {
+            @apply bg-white rounded-xl shadow-md p-6 mb-8;
+        }
+        .tab-btn {
+            @apply px-6 py-3 font-medium rounded-lg transition-all;
+        }
+        .tab-btn.active {
+            @apply bg-blue-600 text-white;
+        }
+        .tab-btn:not(.active) {
+            @apply bg-gray-100 text-gray-700 hover:bg-gray-200;
+        }
+        .image-preview {
+            @apply w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 mb-4 overflow-hidden;
+        }
+        .image-preview img {
+            @apply w-full h-full object-cover;
+        }
+        .case-item {
+            @apply border border-gray-200 rounded-lg p-4 mb-4 hover:shadow-md transition-shadow;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- 顶部导航 -->
+    <nav class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-blue-600">数合美 | 管理后台</h1>
+            <button id="logoutBtn" class="text-red-600 hover:text-red-700 font-medium">
+                <i class="fa-solid fa-right-from-bracket mr-2"></i>退出登录
+            </button>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        <!-- 登录验证提示 -->
+        <div id="authError" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-8 hidden">
+            <strong class="font-bold">未登录！</strong>
+            <span class="block sm:inline">请先登录后再访问后台。</span>
+            <button id="goLoginBtn" class="mt-2 text-blue-600 hover:underline">前往登录</button>
+        </div>
+
+        <!-- 标签页 -->
+        <div class="flex flex-wrap gap-4 mb-8">
+            <button class="tab-btn active" data-tab="cases">案例管理</button>
+            <button class="tab-btn" data-tab="company">公司信息</button>
+            <button class="tab-btn" data-tab="export">数据导出</button>
+        </div>
+
+        <!-- 案例管理标签页 -->
+        <div id="cases-tab" class="tab-content">
+            <div class="card">
+                <h2 class="text-xl font-bold mb-6">添加新案例</h2>
+                <form id="caseForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label class="form-label">案例标题</label>
+                        <input type="text" id="caseTitle" class="form-input" placeholder="输入案例标题">
+                    </div>
+                    <div>
+                        <label class="form-label">案例标签</label>
+                        <input type="text" id="caseTag" class="form-input" placeholder="如：大健康行业">
+                    </div>
+                    <div>
+                        <label class="form-label">标签颜色</label>
+                        <select id="caseTagColor" class="form-input">
+                            <option value="blue">蓝色</option>
+                            <option value="green">绿色</option>
+                            <option value="purple">紫色</option>
+                            <option value="red">红色</option>
+                            <option value="orange">橙色</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="form-label">案例描述</label>
+                        <textarea id="caseDescription" class="form-input h-32" placeholder="输入案例详细描述"></textarea>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="form-label">策略核心标题</label>
+                        <input type="text" id="strategyTitle" class="form-input" placeholder="如：全域数字营销增长模型">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="form-label">策略核心描述</label>
+                        <textarea id="strategyDesc" class="form-input h-24" placeholder="输入策略核心详细描述"></textarea>
+                    </div>
+                    <div>
+                        <label class="form-label">成果展示类型</label>
+                        <select id="resultType" class="form-input">
+                            <option value="cards">卡片式</option>
+                            <option value="list">列表式</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">成果内容（每行一个）</label>
+                        <textarea id="resultsContent" class="form-input h-32" placeholder="如：
+营收增长400%
+用户复购率提升25%
+品牌曝光量增长300%"></textarea>
+                    </div>
+
+                    <!-- 图片上传区域 -->
+                    <div class="md:col-span-2">
+                        <label class="form-label">案例主图</label>
+                        <div class="image-preview" id="mainImagePreview">
+                            <span>预览区域</span>
+                        </div>
+                        <input type="file" id="mainImage" accept="image/*" class="form-input">
+                        <input type="hidden" id="mainImageBase64">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="form-label">案例子图1</label>
+                        <div class="image-preview" id="sub1ImagePreview">
+                            <span>预览区域</span>
+                        </div>
+                        <input type="file" id="sub1Image" accept="image/*" class="form-input">
+                        <input type="hidden" id="sub1ImageBase64">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="form-label">案例子图2</label>
+                        <div class="image-preview" id="sub2ImagePreview">
+                            <span>预览区域</span>
+                        </div>
+                        <input type="file" id="sub2Image" accept="image/*" class="form-input">
+                        <input type="hidden" id="sub2ImageBase64">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="form-label">案例子图3（可选）</label>
+                        <div class="image-preview" id="sub3ImagePreview">
+                            <span>预览区域</span>
+                        </div>
+                        <input type="file" id="sub3Image" accept="image/*" class="form-input">
+                        <input type="hidden" id="sub3ImageBase64">
+                    </div>
+
+                    <div class="md:col-span-2 flex justify-end gap-4">
+                        <button type="button" id="resetCaseBtn" class="btn-secondary">重置</button>
+                        <button type="submit" class="btn-primary">保存案例</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 案例列表 -->
+            <div class="card">
+                <h2 class="text-xl font-bold mb-6">案例列表</h2>
+                <div id="casesList" class="space-y-4">
+                    <!-- 案例列表将动态渲染 -->
+                    <div class="text-gray-500 text-center py-8">暂无案例数据</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 公司信息标签页 -->
+        <div id="company-tab" class="tab-content hidden">
+            <div class="card">
+                <h2 class="text-xl font-bold mb-6">编辑公司信息</h2>
+                <form id="companyForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="form-label">大健康行业服务占比</label>
+                        <input type="text" id="healthRatio" class="form-input" placeholder="如：25%">
+                    </div>
+                    <div>
+                        <label class="form-label">核心行业覆盖数量</label>
+                        <input type="text" id="industryCount" class="form-input" placeholder="如：9+">
+                    </div>
+                    <div>
+                        <label class="form-label">简自美年度营收增长</label>
+                        <input type="text" id="growthData" class="form-input" placeholder="如：400%">
+                    </div>
+                    <div>
+                        <label class="form-label">核心服务理念</label>
+                        <input type="text" id="servicePhilosophy" class="form-input" placeholder="如：战略陪伴">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="form-label">公司介绍</label>
+                        <textarea id="companyIntro" class="form-input h-32" placeholder="输入公司介绍内容"></textarea>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="form-label">服务理念描述</label>
+                        <textarea id="philosophyDesc" class="form-input h-48" placeholder="输入服务理念详细描述"></textarea>
+                    </div>
+                    <div class="md:col-span-2 flex justify-end gap-4">
+                        <button type="button" id="resetCompanyBtn" class="btn-secondary">重置</button>
+                        <button type="submit" class="btn-primary">保存公司信息</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 数据导出标签页 -->
+        <div id="export-tab" class="tab-content hidden">
+            <div class="card">
+                <h2 class="text-xl font-bold mb-6">数据导出</h2>
+                <div class="space-y-6">
+                    <div>
+                        <button id="exportCasesBtn" class="btn-primary">
+                            <i class="fa-solid fa-download mr-2"></i>导出案例数据 (cases.json)
+                        </button>
+                        <p class="text-sm text-gray-500 mt-2">导出当前所有案例数据，可直接替换项目中的 cases.json 文件</p>
+                    </div>
+                    <div>
+                        <button id="exportCompanyBtn" class="btn-primary">
+                            <i class="fa-solid fa-download mr-2"></i>导出公司信息 (company.json)
+                        </button>
+                        <p class="text-sm text-gray-500 mt-2">导出公司信息数据，可直接替换项目中的 company.json 文件</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 成功提示弹窗 -->
+    <div id="successModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-check text-green-500 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2" id="successTitle">操作成功！</h3>
+                <p class="text-gray-600 mb-6" id="successMessage">你的修改已保存，请导出数据更新到项目中。</p>
+                <button id="closeSuccessModal" class="btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ====================== 登录验证 ======================
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('caseAdminLoggedIn') === 'true';
+            const loginTime = localStorage.getItem('loginTime');
+            
+            // 检查登录状态和有效期（24小时）
+            const isExpired = loginTime && (new Date().getTime() - parseInt(loginTime) > 24 * 60 * 60 * 1000);
+            
+            if (!isLoggedIn || isExpired) {
+                document.getElementById('authError').classList.remove('hidden');
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+                return false;
+            }
+            return true;
+        }
+
+        // 退出登录
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('caseAdminLoggedIn');
+            localStorage.removeItem('loginTime');
+            window.location.href = 'index.html';
+        });
+
+        // 前往登录
+        document.getElementById('goLoginBtn').addEventListener('click', () => {
+            window.location.href = 'index.html#login';
+        });
+
+        // ====================== 标签页切换 ======================
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 移除所有激活状态
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+                
+                // 激活当前标签
+                btn.classList.add('active');
+                const tabId = btn.getAttribute('data-tab') + '-tab';
+                document.getElementById(tabId).classList.remove('hidden');
+            });
+        });
+
+        // ====================== 图片上传预览 ======================
+        function setupImagePreview(inputId, previewId, hiddenInputId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            const hiddenInput = document.getElementById(hiddenInputId);
+            
+            input.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        preview.innerHTML = `<img src="${event.target.result}" alt="预览图">`;
+                        hiddenInput.value = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // 初始化图片预览
+        setupImagePreview('mainImage', 'mainImagePreview', 'mainImageBase64');
+        setupImagePreview('sub1Image', 'sub1ImagePreview', 'sub1ImageBase64');
+        setupImagePreview('sub2Image', 'sub2ImagePreview', 'sub2ImageBase64');
+        setupImagePreview('sub3Image', 'sub3ImagePreview', 'sub3ImageBase64');
+
+        // ====================== 案例管理 ======================
+        // 加载案例数据
+        function loadCases() {
+            fetch('cases.json')
+                .then(response => {
+                    if (!response.ok) return [];
+                    return response.json();
+                })
+                .then(cases => {
+                    const casesList = document.getElementById('casesList');
+                    if (cases.length === 0) {
+                        casesList.innerHTML = '<div class="text-gray-500 text-center py-8">暂无案例数据</div>';
+                        return;
+                    }
+                    
+                    casesList.innerHTML = '';
+                    cases.forEach((item, index) => {
+                        const caseItem = document.createElement('div');
+                        caseItem.className = 'case-item';
+                        caseItem.innerHTML = `
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-lg">${item.title || '无标题'}</h3>
+                                    <p class="text-sm text-gray-500 mt-1">${item.tag || '未分类'}</p>
+                                </div>
+                                <button class="delete-case text-red-500 hover:text-red-700" data-index="${index}">
+                                    <i class="fa-solid fa-trash"></i> 删除
+                                </button>
+                            </div>
+                        `;
+                        casesList.appendChild(caseItem);
+                    });
+                    
+                    // 添加删除事件
+                    document.querySelectorAll('.delete-case').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const index = parseInt(e.target.closest('.delete-case').dataset.index);
+                            deleteCase(index);
+                        });
+                    });
+                });
+        }
+
+        // 删除案例
+        function deleteCase(index) {
+            if (!confirm('确定要删除这个案例吗？')) return;
+            
+            fetch('cases.json')
+                .then(response => response.json())
+                .then(cases => {
+                    cases.splice(index, 1);
+                    // 保存到本地存储（临时）
+                    localStorage.setItem('tempCases', JSON.stringify(cases));
+                    loadCases();
+                    showSuccessModal('案例删除成功！', '该案例已从列表中移除，请导出最新数据更新到项目中。');
+                });
+        }
+
+        // 保存案例
+        document.getElementById('caseForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // 获取表单数据
+            const caseData = {
+                title: document.getElementById('caseTitle').value.trim(),
+                tag: document.getElementById('caseTag').value.trim(),
+                tagColor: document.getElementById('caseTagColor').value,
+                description: document.getElementById('caseDescription').value.trim(),
+                strategyTitle: document.getElementById('strategyTitle').value.trim(),
+                strategyDesc: document.getElementById('strategyDesc').value.trim(),
+                resultType: document.getElementById('resultType').value,
+                results: document.getElementById('resultsContent').value.trim().split('\n').filter(line => line.trim()),
+                images: {
+                    mainUrl: document.getElementById('mainImageBase64').value,
+                    sub1Url: document.getElementById('sub1ImageBase64').value,
+                    sub2Url: document.getElementById('sub2ImageBase64').value,
+                    sub3Url: document.getElementById('sub3ImageBase64').value
+                }
+            };
+            
+            // 加载现有案例
+            fetch('cases.json')
+                .then(response => {
+                    if (!response.ok) return [];
+                    return response.json();
+                })
+                .then(cases => {
+                    cases.push(caseData);
+                    // 保存到本地存储（临时）
+                    localStorage.setItem('tempCases', JSON.stringify(cases));
+                    // 重置表单
+                    document.getElementById('caseForm').reset();
+                    document.querySelectorAll('.image-preview').forEach(preview => {
+                        preview.innerHTML = '<span>预览区域</span>';
+                    });
+                    document.querySelectorAll('input[type="hidden"][id$="Base64"]').forEach(input => {
+                        input.value = '';
+                    });
+                    // 重新加载案例列表
+                    loadCases();
+                    // 显示成功提示
+                    showSuccessModal('案例添加成功！', '新案例已添加到列表中，请导出最新数据更新到项目中。');
+                });
+        });
+
+        // 重置案例表单
+        document.getElementById('resetCaseBtn').addEventListener('click', () => {
+            document.getElementById('caseForm').reset();
+            document.querySelectorAll('.image-preview').forEach(preview => {
+                preview.innerHTML = '<span>预览区域</span>';
+            });
+            document.querySelectorAll('input[type="hidden"][id$="Base64"]').forEach(input => {
+                input.value = '';
+            });
+        });
+
+        // ====================== 公司信息管理 ======================
+        // 加载公司信息
+        function loadCompanyInfo() {
+            fetch('company.json')
+                .then(response => {
+                    if (!response.ok) return {};
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('healthRatio').value = data.healthRatio || '';
+                    document.getElementById('industryCount').value = data.industryCount || '';
+                    document.getElementById('growthData').value = data.growthData || '';
+                    document.getElementById('servicePhilosophy').value = data.servicePhilosophy || '';
+                    document.getElementById('companyIntro').value = data.companyIntro || '';
+                    document.getElementById('philosophyDesc').value = data.philosophyDesc || '';
+                });
+        }
+
+        // 保存公司信息
+        document.getElementById('companyForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const companyData = {
+                healthRatio: document.getElementById('healthRatio').value.trim(),
+                industryCount: document.getElementById('industryCount').value.trim(),
+                growthData: document.getElementById('growthData').value.trim(),
+                servicePhilosophy: document.getElementById('servicePhilosophy').value.trim(),
+                companyIntro: document.getElementById('companyIntro').value.trim(),
+                philosophyDesc: document.getElementById('philosophyDesc').value.trim()
+            };
+            
+            // 保存到本地存储（临时）
+            localStorage.setItem('tempCompany', JSON.stringify(companyData));
+            showSuccessModal('公司信息保存成功！', '公司信息已更新，请导出最新数据更新到项目中。');
+        });
+
+        // 重置公司信息表单
+        document.getElementById('resetCompanyBtn').addEventListener('click', () => {
+            document.getElementById('companyForm').reset();
+        });
+
+        // ====================== 数据导出 ======================
+        function downloadFile(data, filename, contentType) {
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: contentType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // 导出案例数据
+        document.getElementById('exportCasesBtn').addEventListener('click', () => {
+            // 优先使用本地存储的临时数据，否则加载远程数据
+            const tempCases = localStorage.getItem('tempCases');
+            if (tempCases) {
+                downloadFile(JSON.parse(tempCases), 'cases.json', 'application/json');
+                showSuccessModal('案例数据导出成功！', 'cases.json 文件已下载，可直接替换项目中的对应文件。');
+                return;
+            }
+            
+            fetch('cases.json')
+                .then(response => response.json())
+                .then(cases => {
+                    downloadFile(cases, 'cases.json', 'application/json');
+                    showSuccessModal('案例数据导出成功！', 'cases.json 文件已下载，可直接替换项目中的对应文件。');
+                });
+        });
+
+        // 导出公司信息
+        document.getElementById('exportCompanyBtn').addEventListener('click', () => {
+            // 优先使用本地存储的临时数据，否则加载远程数据
+            const tempCompany = localStorage.getItem('tempCompany');
+            if (tempCompany) {
+                downloadFile(JSON.parse(tempCompany), 'company.json', 'application/json');
+                showSuccessModal('公司信息导出成功！', 'company.json 文件已下载，可直接替换项目中的对应文件。');
+                return;
+            }
+            
+            fetch('company.json')
+                .then(response => response.json())
+                .then(company => {
+                    downloadFile(company, 'company.json', 'application/json');
+                    showSuccessModal('公司信息导出成功！', 'company.json 文件已下载，可直接替换项目中的对应文件。');
+                });
+        });
+
+        // ====================== 成功提示弹窗 ======================
+        function showSuccessModal(title, message) {
+            document.getElementById('successTitle').textContent = title;
+            document.getElementById('successMessage').textContent = message;
+            document.getElementById('successModal').classList.remove('hidden');
+        }
+
+        document.getElementById('closeSuccessModal').addEventListener('click', () => {
+            document.getElementById('successModal').classList.add('hidden');
+        });
+
+        // ====================== 页面初始化 ======================
+        window.addEventListener('load', () => {
+            if (checkAuth()) {
+                loadCases();
+                loadCompanyInfo();
+            }
+        });
+    </script>
+</body>
+</html>
