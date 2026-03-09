@@ -202,6 +202,92 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--accent);
         }
+
+        /* 轮播样式新增 */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .carousel-slides {
+            display: flex;
+            transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            width: 100%;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            transition: opacity 0.5s ease;
+        }
+
+        .carousel-nav {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 10;
+        }
+
+        .carousel-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .carousel-dot.active {
+            background: var(--accent);
+            transform: scale(1.2);
+        }
+
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .carousel-arrow:hover {
+            background: var(--accent);
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.5);
+        }
+
+        .carousel-arrow.prev {
+            left: 30px;
+        }
+
+        .carousel-arrow.next {
+            right: 30px;
+        }
+
+        /* 响应式调整轮播按钮 */
+        @media (max-width: 768px) {
+            .carousel-arrow {
+                width: 40px;
+                height: 40px;
+            }
+            .carousel-nav {
+                bottom: 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -442,22 +528,104 @@
         </div>
     </section>
 
-   <!-- 数据可视化 -->
+    <!-- 数据可视化 - 轮播形式（更新为5个新案例） -->
     <section class="py-32 bg-black overflow-hidden border-t border-white/5">
         <div class="max-w-[1440px] mx-auto px-8">
             <div class="text-center mb-20">
                 <h2 class="text-xs font-bold tracking-[0.6em] text-sky-500 uppercase mb-6">Insight Growth / 读懂增长</h2>
                 <h3 class="text-5xl font-black italic tracking-tighter">数据可视化美学作品集</h3>
             </div>
-            <div class="relative group cursor-pointer">
-                <div class="case-img-container rounded-[3rem] h-[600px] w-full">
-                    <!-- 替换为苏黄止咳胶囊案例图片 -->
-                    <img src="https://p11-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/daa609bf8c804243800ebb6da49e1f58.png~tplv-a9rns2rl98-24:720:720.png?lk3s=8e244e95&rcl=2026030916491894C2A014C90316EADBD6&rrcfp=8a172a1a&x-expires=1773650959&x-signature=TtaOiPy2m0E545E2%2FEPcc2YYw%2BI%3D" 
-                         alt="苏黄止咳胶囊数据可视化案例" 
-                         class="case-img">
+            
+            <!-- 轮播容器 -->
+            <div class="carousel-container">
+                <!-- 轮播内容 -->
+                <div class="carousel-slides">
+                    <!-- 轮播项1：龙凤堂黄芪精 -->
+                    <div class="carousel-slide">
+                        <div class="relative group cursor-pointer">
+                            <div class="case-img-container rounded-[3rem] h-[600px] w-full">
+                                <img src="https://p11-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/88349ca1116548ccb6574e5a9861d4a4.png~tplv-a9rns2rl98-24:720:720.png?lk3s=8e244e95&rcl=202603091710085A457B02C5DECD14F9C6&rrcfp=8a172a1a&x-expires=1773652209&x-signature=fsZyiFt5ymOUX6MPhqqzRim%2B9zY%3D" 
+                                     alt="龙凤堂黄芪精战略增长规划" 
+                                     class="case-img">
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent flex flex-col justify-end p-20 opacity-90 transition-opacity group-hover:opacity-100">
+                                <p class="text-2xl font-light text-gray-400 max-w-xl">龙凤堂黄芪精 - 从传统补气血品类中分化出高品质补气新品类，以品类开创者姿态重新定义现代中式滋补消费标准。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 轮播项2：稻田诊合 -->
+                    <div class="carousel-slide">
+                        <div class="relative group cursor-pointer">
+                            <div class="case-img-container rounded-[3rem] h-[600px] w-full">
+                                <img src="https://p3-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/885d59a5d91847bfa836079fe8e30be4.png~tplv-a9rns2rl98-24:720:720.png?lk3s=8e244e95&rcl=202603091710085A457B02C5DECD14F9C6&rrcfp=8a172a1a&x-expires=1773652209&x-signature=P%2BucGiwZuDZasZNV0x5lnQKBvbQ%3D" 
+                                     alt="稻田诊合精准医学诊断服务" 
+                                     class="case-img">
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent flex flex-col justify-end p-20 opacity-90 transition-opacity group-hover:opacity-100">
+                                <p class="text-2xl font-light text-gray-400 max-w-xl">稻田诊合 - 聚合生命健康的真正答案，构建3大智「汇」图景与4大创新服务体系的精准医学诊断技术服务。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 轮播项3：AniStell安啉斯坦 -->
+                    <div class="carousel-slide">
+                        <div class="relative group cursor-pointer">
+                            <div class="case-img-container rounded-[3rem] h-[600px] w-full">
+                                <img src="https://p26-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/37863d3d1fc345a2bdbff7b4d40ebbdf.png~tplv-a9rns2rl98-24:720:720.png?lk3s=8e244e95&rcl=202603091710085A457B02C5DECD14F9C6&rrcfp=8a172a1a&x-expires=1773652209&x-signature=r5%2BpZQPNUiQgqTp5lXuzeEzxw%2Bk%3D" 
+                                     alt="AniStell安啉斯坦动物干细胞品牌战略" 
+                                     class="case-img">
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent flex flex-col justify-end p-20 opacity-90 transition-opacity group-hover:opacity-100">
+                                <p class="text-2xl font-light text-gray-400 max-w-xl">AniStell安啉斯坦 - 用科技守护对生命的爱与责任，为动物干细胞治疗打造完整的品牌战略与视觉识别系统。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 轮播项4：苏黄止咳胶囊 -->
+                    <div class="carousel-slide">
+                        <div class="relative group cursor-pointer">
+                            <div class="case-img-container rounded-[3rem] h-[600px] w-full">
+                                <img src="https://p3-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/ff03a0ea5ca9491a83ad8ced2a8b8c7f.png~tplv-a9rns2rl98-24:720:720.png?lk3s=8e244e95&rcl=202603091710085A457B02C5DECD14F9C6&rrcfp=8a172a1a&x-expires=1773652209&x-signature=BotEmhpSmcmQD2j9wpFVhkcyeH4%3D" 
+                                     alt="苏黄止咳胶囊整合营销" 
+                                     class="case-img">
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent flex flex-col justify-end p-20 opacity-90 transition-opacity group-hover:opacity-100">
+                                <p class="text-2xl font-light text-gray-400 max-w-xl">苏黄止咳胶囊 - 通过“科普+商业”差异化模式，实现活动客流与产品销售双增长20%，品牌专业形象提升30%。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 轮播项5：Discovery为地球声援 -->
+                    <div class="carousel-slide">
+                        <div class="relative group cursor-pointer">
+                            <div class="case-img-container rounded-[3rem] h-[600px] w-full">
+                                <img src="https://p26-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/cbb75b051722402f97cafdab8c90d0ef.png~tplv-a9rns2rl98-24:720:720.png?lk3s=8e244e95&rcl=202603091710085A457B02C5DECD14F9C6&rrcfp=8a172a1a&x-expires=1773652209&x-signature=Gt1%2BF3IJBNiRHSCfjTPYMLXubZQ%3D" 
+                                     alt="Discovery为地球声援公益活动" 
+                                     class="case-img">
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent flex flex-col justify-end p-20 opacity-90 transition-opacity group-hover:opacity-100">
+                                <p class="text-2xl font-light text-gray-400 max-w-xl">Discovery为地球声援 - 联合吴青峰打造互动体验H5，让环保理念触手可感地传递给大众，为地球可持续发展贡献力量。</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent flex flex-col justify-end p-20 opacity-90 transition-opacity group-hover:opacity-100">
-                    <p class="text-2xl font-light text-gray-400 max-w-xl">苏黄止咳胶囊项目通过7S模型构建专业科普+商业转化的差异化模式，实现活动客流增长20%、产品销售增长20%，品牌专业形象提升30%。</p>
+                
+                <!-- 轮播箭头 -->
+                <button class="carousel-arrow prev" id="prevBtn">
+                    <i class="fas fa-chevron-left text-xl"></i>
+                </button>
+                <button class="carousel-arrow next" id="nextBtn">
+                    <i class="fas fa-chevron-right text-xl"></i>
+                </button>
+                
+                <!-- 轮播指示器（更新为5个） -->
+                <div class="carousel-nav">
+                    <button class="carousel-dot active" data-index="0"></button>
+                    <button class="carousel-dot" data-index="1"></button>
+                    <button class="carousel-dot" data-index="2"></button>
+                    <button class="carousel-dot" data-index="3"></button>
+                    <button class="carousel-dot" data-index="4"></button>
                 </div>
             </div>
         </div>
@@ -475,7 +643,7 @@
                     <div class="space-y-12">
                         <div>
                             <span class="text-xs font-bold tracking-[0.3em] text-sky-500 uppercase mb-4 block">New Business</span>
-                            <a href="mailto:hello@shm.com" class="text-4xl md:text-5xl font-black hover:text-sky-500 transition-colors tracking-tight">japhy5000@126.com</a>
+                            <a href="mailto:hello@shm.com" class="text-4xl md:text-5xl font-black hover:text-sky-500 transition-colors tracking-tight">japhy@126.com</a>
                         </div>
                         <div>
                             <span class="text-xs font-bold tracking-[0.3em] text-sky-500 uppercase mb-4 block">Headquarters</span>
@@ -500,7 +668,7 @@
         </div>
     </footer>
 
-    <!-- 简单的JS增强交互 -->
+    <!-- 增强的JS交互 -->
     <script>
         // 导航栏滚动效果
         window.addEventListener('scroll', function() {
@@ -518,12 +686,73 @@
         const menuBtn = document.querySelector('.lg\\:hidden');
         if (menuBtn) {
             menuBtn.addEventListener('click', function() {
-                // 这里可以实现移动端菜单的展开/收起逻辑
                 alert('移动端菜单功能可在此处实现');
             });
         }
 
-        // 移除图片占位符的点击提示（因为已经替换为真实图片）
+        // 轮播功能实现（适配5个轮播项）
+        document.addEventListener('DOMContentLoaded', function() {
+            const slidesContainer = document.querySelector('.carousel-slides');
+            const slides = document.querySelectorAll('.carousel-slide');
+            const dots = document.querySelectorAll('.carousel-dot');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            let currentIndex = 0;
+            const slideCount = slides.length; // 现在会自动识别为5个
+            
+            // 更新轮播显示
+            function updateCarousel() {
+                // 移动轮播容器
+                slidesContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+                
+                // 更新指示器状态
+                dots.forEach((dot, index) => {
+                    if (index === currentIndex) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+            
+            // 下一张
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % slideCount;
+                updateCarousel();
+            }
+            
+            // 上一张
+            function prevSlide() {
+                currentIndex = (currentIndex - 1 + slideCount) % slideCount;
+                updateCarousel();
+            }
+            
+            // 点击指示器切换
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', function() {
+                    currentIndex = index;
+                    updateCarousel();
+                });
+            });
+            
+            // 绑定按钮事件
+            nextBtn.addEventListener('click', nextSlide);
+            prevBtn.addEventListener('click', prevSlide);
+            
+            // 自动轮播 (可选)
+            let autoplayInterval = setInterval(nextSlide, 5000);
+            
+            // 鼠标悬停时暂停自动轮播
+            const carouselContainer = document.querySelector('.carousel-container');
+            carouselContainer.addEventListener('mouseenter', function() {
+                clearInterval(autoplayInterval);
+            });
+            
+            // 鼠标离开时恢复自动轮播
+            carouselContainer.addEventListener('mouseleave', function() {
+                autoplayInterval = setInterval(nextSlide, 5000);
+            });
+        });
     </script>
 </body>
 </html>
