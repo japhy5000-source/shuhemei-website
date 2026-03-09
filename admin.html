@@ -251,13 +251,14 @@
     </div>
 
     <script>
-        // ====================== 登录验证 ======================
+        // ====================== 登录验证（兼容加密登录） ======================
         function checkAuth() {
             const isLoggedIn = localStorage.getItem('caseAdminLoggedIn') === 'true';
             const loginTime = localStorage.getItem('loginTime');
+            const LOGIN_EXPIRE_HOURS = 24;
             
-            // 检查登录状态和有效期（24小时）
-            const isExpired = loginTime && (new Date().getTime() - parseInt(loginTime) > 24 * 60 * 60 * 1000);
+            // 检查登录状态和有效期
+            const isExpired = loginTime && (new Date().getTime() - parseInt(loginTime) > LOGIN_EXPIRE_HOURS * 60 * 60 * 1000);
             
             if (!isLoggedIn || isExpired) {
                 document.getElementById('authError').classList.remove('hidden');
